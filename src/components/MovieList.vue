@@ -28,7 +28,6 @@
       </v-col>
     </v-row>
     <v-alert
-
       :value="hasError"
       border="right"
       color="orange"
@@ -70,6 +69,11 @@ export default {
   },
   methods: {
     searchMovie () {
+      if (!this.keyword || !this.keyword.trim()) {
+        this.errorMsg = '請輸入搜尋關鍵字'
+        this.hasError = true
+        return
+      }
       this.$router.push({ name: 'Home', query: { keyword: this.keyword } })
       this.fetchMovie(this.keyword)
     },

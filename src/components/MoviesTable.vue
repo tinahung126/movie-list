@@ -13,7 +13,7 @@
       <template v-slot:top>
         <v-dialog
           v-model="dialog"
-          max-width="500px"
+          max-width="700px"
         >
           <v-card>
             <v-card-title>
@@ -22,45 +22,57 @@
             <v-divider class="mx-4" />
 
             <v-card-text class="ml-0 pl-0">
-              <v-container>
-                <v-list-item>
-                  <v-list-item-icon class="mr-2">
-                    <v-icon small>
-                      mdi-account-group
-                    </v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="text-wrap">
-                      演員：{{ movieItem.Actors }}
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider class="mx-4" />
-                <v-list-item>
-                  <v-list-item-icon class="mr-2">
-                    <v-icon small>
-                      mdi-movie-open
-                    </v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="text-wrap">
-                      類型：{{ movieItem.Genre }}
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-                <v-divider class="mx-4" />
-                <v-list-item>
-                  <v-list-item-icon class="mr-2">
-                    <v-icon small>
-                      mdi-file-document-multiple
-                    </v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title class="text-wrap">
-                      故事內容簡介：<br> {{ movieItem.Plot }}
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
+              <v-container class="d-flex">
+                <div class="flex-grow-1">
+                  <v-list-item>
+                    <v-list-item-icon class="mr-2">
+                      <v-icon small>
+                        mdi-account-group
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="text-wrap">
+                        演員：{{ movieItem.Actors | emptyContent }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mx-4" />
+                  <v-list-item>
+                    <v-list-item-icon class="mr-2">
+                      <v-icon small>
+                        mdi-movie-open
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="text-wrap">
+                        類型：{{ movieItem.Genre | emptyContent }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider class="mx-4" />
+                  <v-list-item>
+                    <v-list-item-icon class="mr-2">
+                      <v-icon small>
+                        mdi-file-document-multiple
+                      </v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="text-wrap">
+                        故事內容簡介：<br> {{ movieItem.Plot | emptyContent }}
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </div>
+                <div
+                  v-if="movieItem.Poster !== 'N/A'"
+                  class="img"
+                >
+                  <v-img
+                    width="200px"
+                    rounded-sm
+                    :src="movieItem.Poster"
+                  />
+                </div>
               </v-container>
             </v-card-text>
 
@@ -102,9 +114,10 @@
 </template>
 <script>
 import MovieAPI from './../apis/movie'
-
+import { emptyContentFilter } from './../utils/mixins'
 export default {
   name: 'MovieTable',
+  mixins: [emptyContentFilter],
   props: {
     initialMoviesList: {
       type: Array,
@@ -128,7 +141,7 @@ export default {
       },
       { text: '類型', value: 'Type' },
       { text: '年份', value: 'Year' },
-      { text: 'Actions', value: 'actions', sortable: false }
+      { text: '', value: 'actions', sortable: false }
     ],
     moviesList: [],
     editedIndex: -1,
@@ -155,13 +168,6 @@ export default {
   watch: {
     initialMoviesList (newValue) {
       this.moviesList = newValue
-    },
-
-    dialog (val) {
-      val || this.close()
-    },
-    dialogDelete (val) {
-      val || this.closeDelete()
     }
   },
 
