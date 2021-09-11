@@ -88,16 +88,12 @@
       </template>
 
       <template v-slot:no-data>
-        <v-btn
-          color="primary"
-          @click="initialize"
-        >
-          Reset
-        </v-btn>
+        <span>請搜尋電影</span>
       </template>
     </v-data-table>
     <div class="my-5">
       <v-pagination
+        v-show="pageCount"
         v-model="page"
         :length="pageCount"
       />
@@ -112,7 +108,9 @@ export default {
   props: {
     initialMoviesList: {
       type: Array,
-      required: true
+      default () {
+        return []
+      }
     }
   },
   data: () => ({

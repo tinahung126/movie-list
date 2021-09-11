@@ -37,7 +37,7 @@
       width="40%"
       transition="scale-transition"
     >
-      查無資料，請重新輸入
+      {{ errorMsg }}
     </v-alert>
     <Movies
       class="mt-8"
@@ -58,24 +58,37 @@ export default {
     return {
       keyword: '',
       movieslist: [],
-      hasError: false
+      hasError: false,
+      errorMsg: ''
     }
   },
   created () {
-    this.fetchMovie('test')
+    const { keyword } = this.$route.query
+    if (keyword) {
+      this.fetchMovie(keyword)
+    }
   },
   methods: {
     searchMovie () {
+      this.$router.push({ name: 'Home', query: { keyword: this.keyword } })
       this.fetchMovie(this.keyword)
     },
     async fetchMovie (keyword) {
       try {
         const { data } = await MovieAPI.getMovies(keyword)
-        this.hasError = false
-        this.movieslist.push(...data.Search)
         console.log(data)
+        if (data.Response === 'False') {
+          this.hasError = true
+          this.movieslist = []
+          this.errorMsg = data.Error
+          return
+        }
+        this.hasError = false
+
+        this.movieslist = data.Search
       } catch (error) {
         this.hasError = true
+        this.movieslist = []
         console.log('error from catch', error)
       }
     }
