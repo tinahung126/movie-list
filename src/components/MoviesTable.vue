@@ -8,7 +8,8 @@
       :page.sync="page"
       :items-per-page="itemsPerPage"
       hide-default-footer
-      @page-count="pageCount = $event"
+      :loading="loading"
+      loading-text="Loading... Please wait"
     >
       <template v-slot:top>
         <v-dialog
@@ -26,39 +27,51 @@
                 <div class="flex-grow-1">
                   <v-list-item>
                     <v-list-item-icon class="mr-2">
-                      <v-icon small>
+                      <v-icon
+                        small
+                        color="blue darken-1"
+                      >
                         mdi-account-group
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title class="text-wrap">
-                        演員：{{ movieItem.Actors | emptyContent }}
+                        <strong>演員：</strong>
+                        {{ movieItem.Actors | emptyContent }}
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                   <v-divider class="mx-4" />
                   <v-list-item>
                     <v-list-item-icon class="mr-2">
-                      <v-icon small>
+                      <v-icon
+                        small
+                        color="blue darken-1"
+                      >
                         mdi-movie-open
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title class="text-wrap">
-                        類型：{{ movieItem.Genre | emptyContent }}
+                        <strong>類型：</strong>
+                        {{ movieItem.Genre | emptyContent }}
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                   <v-divider class="mx-4" />
                   <v-list-item>
                     <v-list-item-icon class="mr-2">
-                      <v-icon small>
+                      <v-icon
+                        small
+                        color="blue darken-1"
+                      >
                         mdi-file-document-multiple
                       </v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
                       <v-list-item-title class="text-wrap">
-                        故事內容簡介：<br> {{ movieItem.Plot | emptyContent }}
+                        <strong>故事內容簡介：</strong>
+                        <br> {{ movieItem.Plot | emptyContent }}
                       </v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
@@ -80,7 +93,7 @@
               <v-spacer />
               <v-btn
                 dark
-                color="indigo"
+                color="blue darken-1"
                 @click="dialog = false"
               >
                 OK
@@ -105,9 +118,10 @@
     </v-data-table>
     <div class="my-5">
       <v-pagination
-        v-show="pageCount"
         v-model="page"
-        :length="pageCount"
+        color="teal accent-4"
+        :length="totalPage"
+        @input="next"
       />
     </div>
   </div>
@@ -124,14 +138,24 @@ export default {
       default () {
         return []
       }
+    },
+    initialTotalPage: {
+      type: Number,
+      default: 0
+    },
+    initialCurrentPage: {
+      type: Number,
+      default: 1
     }
   },
   data: () => ({
     dialog: false,
     page: 1,
     pageCount: 0,
+    totalPage: 0,
     itemsPerPage: 10,
     dialogDelete: false,
+    loading: true,
     headers: [
       {
         text: '名稱',
@@ -158,34 +182,36 @@ export default {
       Year: 0
     }
   }),
-
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    }
-  },
-
   watch: {
     initialMoviesList (newValue) {
+      this.loading = true
+
       this.moviesList = newValue
-    }
-  },
-
-  created () {
-
-  },
-
-  methods: {
-    initialize () {
-      this.moviesList = this.initialMoviesList
+      this.loading = false
     },
+    initialTotalPage (newValue) {
+      this.totalPage = Math.ceil(newValue / this.itemsPerPage)
+    },
+    initialCurrentPage (newValue) {
+      this.page = newValue
+    }
+
+  },
+  created () {
+    this.loading = true
+    const { page } = this.$route.query
+    this.page = Number(page)
+  },
+  methods: {
     async readMore (item) {
       this.editedIndex = item.imdbID
       const { data } = await MovieAPI.getDetail(item.imdbID)
-      console.log(data)
       this.movieItem = Object.assign({}, data)
       this.dialog = true
-      console.log(this.movieItem)
+    },
+    next (page) {
+      this.$emit('change-page', page)
+      this.loading = true
     }
 
   }

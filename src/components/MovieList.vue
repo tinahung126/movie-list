@@ -19,8 +19,9 @@
       <v-col cols="2">
         <v-btn
           depressed
+          dark
           height="40px"
-          color="primary"
+          color="teal accent-4"
           @click.stop.prevent="searchMovie"
         >
           Search
@@ -41,6 +42,9 @@
     <Movies
       class="mt-8"
       :initial-movies-list="movieslist"
+      :initial-total-page="totalPage"
+      :initial-current-page="currentPage"
+      @change-page="handleChangePage"
     />
   </v-container>
 </template>
@@ -58,13 +62,17 @@ export default {
       keyword: '',
       movieslist: [],
       hasError: false,
-      errorMsg: ''
+      errorMsg: '',
+      totalPage: 0,
+      currentPage: 1
     }
   },
   created () {
-    const { keyword } = this.$route.query
+    const { keyword, page } = this.$route.query
     if (keyword) {
-      this.fetchMovie(keyword)
+      this.keyword = keyword
+      this.currentPage = Number(page)
+      this.fetchMovie(keyword, page)
     }
   },
   methods: {
@@ -77,9 +85,9 @@ export default {
       this.$router.push({ name: 'Home', query: { keyword: this.keyword } })
       this.fetchMovie(this.keyword)
     },
-    async fetchMovie (keyword) {
+    async fetchMovie (keyword, page = 1) {
       try {
-        const { data } = await MovieAPI.getMovies(keyword)
+        const { data } = await MovieAPI.getMovies(keyword, page)
         console.log(data)
         if (data.Response === 'False') {
           this.hasError = true
@@ -88,13 +96,18 @@ export default {
           return
         }
         this.hasError = false
-
         this.movieslist = data.Search
+        this.totalPage = Number(data.totalResults)
       } catch (error) {
         this.hasError = true
         this.movieslist = []
         console.log('error from catch', error)
       }
+    },
+    handleChangePage (data) {
+      this.fetchMovie(this.keyword, data)
+      this.currentPage = data
+      this.$router.push({ name: 'Home', query: { keyword: this.keyword, page: data } })
     }
   }
 
