@@ -106,6 +106,8 @@
         <v-btn
           color="blue-grey"
           class="ma-2 white--text"
+          :loading="btnLoading && (editedIndex === item.imdbID)"
+          :disabled="btnLoading && (editedIndex === item.imdbID)"
           @click="readMore(item)"
         >
           詳細資料
@@ -156,6 +158,7 @@ export default {
     itemsPerPage: 10,
     dialogDelete: false,
     loading: true,
+    btnLoading: false,
     headers: [
       {
         text: '名稱',
@@ -184,10 +187,10 @@ export default {
   }),
   watch: {
     initialMoviesList (newValue) {
-      this.loading = true
-
+      console.log(this.loading)
       this.moviesList = newValue
       this.loading = false
+      console.log(this.loading)
     },
     initialTotalPage (newValue) {
       this.totalPage = Math.ceil(newValue / this.itemsPerPage)
@@ -204,8 +207,10 @@ export default {
   },
   methods: {
     async readMore (item) {
+      this.btnLoading = true
       this.editedIndex = item.imdbID
       const { data } = await MovieAPI.getDetail(item.imdbID)
+      this.btnLoading = false
       this.movieItem = Object.assign({}, data)
       this.dialog = true
     },
