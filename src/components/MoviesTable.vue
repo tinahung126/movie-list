@@ -8,8 +8,8 @@
       :page.sync="page"
       :items-per-page="itemsPerPage"
       hide-default-footer
-      :loading="loading"
-      loading-text="Loading... Please wait"
+      :loading="isLoading"
+      loading-text="尋找電影中..."
     >
       <template v-slot:top>
         <v-dialog
@@ -106,8 +106,8 @@
         <v-btn
           color="blue-grey"
           class="ma-2 white--text"
-          :loading="btnLoading && (editedIndex === item.imdbID)"
-          :disabled="btnLoading && (editedIndex === item.imdbID)"
+          :loading="btnLoading && (movieIndex === item.imdbID)"
+          :disabled="btnLoading && (movieIndex === item.imdbID)"
           @click="readMore(item)"
         >
           詳細資料
@@ -148,6 +148,10 @@ export default {
     initialCurrentPage: {
       type: Number,
       default: 1
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -157,7 +161,7 @@ export default {
     totalPage: 0,
     itemsPerPage: 10,
     dialogDelete: false,
-    loading: true,
+    loading: false,
     btnLoading: false,
     headers: [
       {
@@ -171,7 +175,7 @@ export default {
       { text: '', value: 'actions', sortable: false }
     ],
     moviesList: [],
-    editedIndex: -1,
+    movieIndex: -1,
     movieItem: {
       Title: '',
       Type: 0,
@@ -187,10 +191,7 @@ export default {
   }),
   watch: {
     initialMoviesList (newValue) {
-      console.log(this.loading)
       this.moviesList = newValue
-      this.loading = false
-      console.log(this.loading)
     },
     initialTotalPage (newValue) {
       this.totalPage = Math.ceil(newValue / this.itemsPerPage)
@@ -201,14 +202,13 @@ export default {
 
   },
   created () {
-    this.loading = true
     const { page } = this.$route.query
     this.page = Number(page)
   },
   methods: {
     async readMore (item) {
       this.btnLoading = true
-      this.editedIndex = item.imdbID
+      this.movieIndex = item.imdbID
       const { data } = await MovieAPI.getDetail(item.imdbID)
       this.btnLoading = false
       this.movieItem = Object.assign({}, data)

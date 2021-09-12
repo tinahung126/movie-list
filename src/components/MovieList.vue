@@ -44,6 +44,7 @@
       :initial-movies-list="movieslist"
       :initial-total-page="totalPage"
       :initial-current-page="currentPage"
+      :is-loading="isLoading"
       @change-page="handleChangePage"
     />
   </v-container>
@@ -64,7 +65,8 @@ export default {
       hasError: false,
       errorMsg: '',
       totalPage: 0,
-      currentPage: 1
+      currentPage: 1,
+      isLoading: false
     }
   },
   created () {
@@ -87,6 +89,7 @@ export default {
     },
     async fetchMovie (keyword, page = 1) {
       try {
+        this.isLoading = true
         const { data } = await MovieAPI.getMovies(keyword, page)
         console.log(data)
         if (data.Response === 'False') {
@@ -95,6 +98,7 @@ export default {
           this.errorMsg = data.Error
           return
         }
+        this.isLoading = false
         this.hasError = false
         this.movieslist = data.Search
         this.totalPage = Number(data.totalResults)
