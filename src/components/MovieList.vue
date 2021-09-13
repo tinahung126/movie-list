@@ -7,7 +7,7 @@
       >
         <v-text-field
           v-model="keyword"
-          label="search something..."
+          label="請輸入電影關鍵字..."
           solo
           dense
           flat
@@ -19,9 +19,11 @@
       <v-col cols="2">
         <v-btn
           depressed
-          dark
           height="40px"
+          class="white--text"
           color="teal accent-4"
+          :disabled="isLoading"
+          :loading="isLoading"
           @click.stop.prevent="searchMovie"
         >
           Search
@@ -79,19 +81,20 @@ export default {
   },
   methods: {
     searchMovie () {
+      this.isLoading = true
       if (!this.keyword || !this.keyword.trim()) {
         this.errorMsg = '請輸入搜尋關鍵字'
         this.hasError = true
         return
       }
-      this.$router.push({ name: 'Home', query: { keyword: this.keyword } })
+      this.$router.push({ name: 'Home', query: { keyword: this.keyword } }).catch(() => {})
       this.fetchMovie(this.keyword)
     },
     async fetchMovie (keyword, page = 1) {
       try {
         this.isLoading = true
         const { data } = await MovieAPI.getMovies(keyword, page)
-        console.log(data)
+        // Error handle
         if (data.Response === 'False') {
           this.hasError = true
           this.movieslist = []
@@ -105,7 +108,7 @@ export default {
       } catch (error) {
         this.hasError = true
         this.movieslist = []
-        console.log('error from catch', error)
+        console.log('Error from fetch movies', error)
       }
     },
     handleChangePage (data) {

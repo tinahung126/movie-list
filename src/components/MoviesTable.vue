@@ -76,6 +76,7 @@
                     </v-list-item-content>
                   </v-list-item>
                 </div>
+
                 <div
                   v-if="movieItem.Poster !== 'N/A'"
                   class="img"
@@ -120,10 +121,12 @@
     </v-data-table>
     <div class="my-5">
       <v-pagination
+        v-if="totalPage"
         v-model="page"
+        :total-visible="7"
         color="teal accent-4"
         :length="totalPage"
-        @input="next"
+        @input="nextPage"
       />
     </div>
   </div>
@@ -160,14 +163,12 @@ export default {
     pageCount: 0,
     totalPage: 0,
     itemsPerPage: 10,
-    dialogDelete: false,
     loading: false,
     btnLoading: false,
     headers: [
       {
         text: '名稱',
         align: 'start',
-        sortable: false,
         value: 'Title'
       },
       { text: '類型', value: 'Type' },
@@ -181,12 +182,6 @@ export default {
       Type: 0,
       Year: 0,
       Actor: ''
-
-    },
-    defaultItem: {
-      Title: '',
-      Type: 0,
-      Year: 0
     }
   }),
   watch: {
@@ -199,7 +194,6 @@ export default {
     initialCurrentPage (newValue) {
       this.page = newValue
     }
-
   },
   created () {
     const { page } = this.$route.query
@@ -207,18 +201,21 @@ export default {
   },
   methods: {
     async readMore (item) {
-      this.btnLoading = true
-      this.movieIndex = item.imdbID
-      const { data } = await MovieAPI.getDetail(item.imdbID)
-      this.btnLoading = false
-      this.movieItem = Object.assign({}, data)
-      this.dialog = true
+      try {
+        this.btnLoading = true
+        this.movieIndex = item.imdbID
+        const { data } = await MovieAPI.getDetail(item.imdbID)
+        this.btnLoading = false
+        this.movieItem = Object.assign({}, data)
+        this.dialog = true
+      } catch (error) {
+        console.log('Error from readMore Btn', error)
+      }
     },
-    next (page) {
+    nextPage (page) {
       this.$emit('change-page', page)
       this.loading = true
     }
-
   }
 }
 </script>

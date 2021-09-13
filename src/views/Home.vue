@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="text-center">
+    <h1 class="text-center mt-5 mb-3">
       電影資料庫
     </h1>
     <MovieList />
