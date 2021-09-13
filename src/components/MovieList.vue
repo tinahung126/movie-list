@@ -13,6 +13,7 @@
           dense
           flat
           outlined
+          clearable
           height="40px"
           hide-details="true"
         />
