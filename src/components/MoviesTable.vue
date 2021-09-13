@@ -22,8 +22,8 @@
               <v-spacer />
               <v-btn
                 rounded
+                icon
                 depressed
-                color="transparent"
                 @click="dialog = false"
               >
                 <v-icon>mdi-close</v-icon>
