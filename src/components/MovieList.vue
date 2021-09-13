@@ -21,7 +21,7 @@
       <v-col
         cols="12"
         sm="2"
-        class="d-flex justify-center"
+        class="d-flex justify-center justify-sm-start"
       >
         <v-btn
           depressed
@@ -43,7 +43,7 @@
       type="error"
       class="mt-5 mx-auto"
       min-width="250px"
-      width="40%"
+      width="50%"
       transition="scale-transition"
     >
       {{ errorMsg }}
