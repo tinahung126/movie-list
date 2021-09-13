@@ -19,10 +19,19 @@
           <v-card>
             <v-card-title>
               {{ movieItem.Title }}
+              <v-spacer />
+              <v-btn
+                rounded
+                depressed
+                color="transparent"
+                @click="dialog = false"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
             </v-card-title>
             <v-divider class="mx-4" />
 
-            <v-card-text class="ml-0 pl-0">
+            <v-card-text class="ml-0 px-0 pb-0">
               <v-container class="d-flex">
                 <div class="flex-grow-1">
                   <v-list-item>
@@ -79,7 +88,7 @@
 
                 <div
                   v-if="movieItem.Poster !== 'N/A'"
-                  class="img"
+                  class="img d-none d-sm-block"
                 >
                   <v-img
                     width="200px"

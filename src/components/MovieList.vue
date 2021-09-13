@@ -2,7 +2,8 @@
   <v-container>
     <v-row justify="center">
       <v-col
-        cols="3"
+        cols="12"
+        sm="4"
         class="pr-0"
       >
         <v-text-field
@@ -16,7 +17,11 @@
           hide-details="true"
         />
       </v-col>
-      <v-col cols="2">
+      <v-col
+        cols="12"
+        sm="2"
+        class="d-flex justify-center"
+      >
         <v-btn
           depressed
           height="40px"
@@ -36,6 +41,7 @@
       color="orange"
       type="error"
       class="mt-5 mx-auto"
+      min-width="250px"
       width="40%"
       transition="scale-transition"
     >
@@ -97,8 +103,10 @@ export default {
         // Error handle
         if (data.Response === 'False') {
           this.hasError = true
+          this.isLoading = false
           this.movieslist = []
           this.errorMsg = data.Error
+          this.totalPage = 0
           return
         }
         this.isLoading = false
@@ -107,6 +115,7 @@ export default {
         this.totalPage = Number(data.totalResults)
       } catch (error) {
         this.hasError = true
+        this.isLoading = false
         this.movieslist = []
         console.log('Error from fetch movies', error)
       }
