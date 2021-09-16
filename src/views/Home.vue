@@ -51,7 +51,7 @@
     >
       {{ errorMsg }}
     </v-alert>
-    <Movies
+    <MoviesTable
       class="mt-8"
       :initial-movies-list="movieslist"
       :initial-total-page="totalPage"
@@ -63,12 +63,12 @@
 </template>
 
 <script>
-import Movies from './../components/MoviesTable.vue'
+import MoviesTable from './../components/MoviesTable.vue'
 import MovieAPI from './../apis/movie'
 export default {
   name: 'Home',
   components: {
-    Movies
+    MoviesTable
   },
   data () {
     return {
