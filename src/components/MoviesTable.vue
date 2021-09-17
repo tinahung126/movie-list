@@ -172,7 +172,6 @@ export default {
     pageCount: 0,
     totalPage: 0,
     itemsPerPage: 10,
-    loading: false,
     btnLoading: false,
     headers: [
       {

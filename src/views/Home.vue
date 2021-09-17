@@ -3,42 +3,44 @@
     <h1 class="text-center mt-5 mb-3">
       電影資料庫
     </h1>
-    <v-row justify="center">
-      <v-col
-        cols="12"
-        sm="4"
-        class="pr-0"
-      >
-        <v-text-field
-          v-model="keyword"
-          label="請輸入電影關鍵字..."
-          solo
-          dense
-          flat
-          outlined
-          clearable
-          height="40px"
-          hide-details="true"
-        />
-      </v-col>
-      <v-col
-        cols="12"
-        sm="2"
-        class="d-flex justify-center justify-sm-start"
-      >
-        <v-btn
-          depressed
-          height="40px"
-          class="white--text"
-          color="teal accent-4"
-          :disabled="isLoading"
-          :loading="isLoading"
-          @click.stop.prevent="searchMovie"
+    <v-form @submit.stop.prevent="searchMovie">
+      <v-row justify="center">
+        <v-col
+          cols="12"
+          sm="4"
+          class="pr-0"
         >
-          Search
-        </v-btn>
-      </v-col>
-    </v-row>
+          <v-text-field
+            v-model="keyword"
+            label="請輸入電影關鍵字..."
+            solo
+            dense
+            flat
+            outlined
+            clearable
+            height="40px"
+            hide-details="true"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="2"
+          class="d-flex justify-center justify-sm-start"
+        >
+          <v-btn
+            depressed
+            type="submit"
+            height="40px"
+            class="white--text"
+            color="teal accent-4"
+            :disabled="isLoading"
+            :loading="isLoading"
+          >
+            Search
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
     <v-alert
       :value="hasError"
       border="right"
@@ -113,7 +115,6 @@ export default {
         const { data } = await MovieAPI.getMovies(keyword, page)
         // Error handle
         if (data.Response === 'False') {
-          console.log(data)
           this.hasError = true
           this.isLoading = false
           this.movieslist = []
